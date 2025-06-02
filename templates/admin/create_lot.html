@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Parking Lot</title>
+    <style>
+        body { background: #e3f2fd; font-family: Arial, sans-serif; }
+        .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #90caf9; }
+        label { display: block; margin-top: 12px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #90caf9; }
+        button { margin-top: 16px; padding: 10px 24px; background: #1976d2; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1565c0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Create Parking Lot</h2>
+        <form method="post" action="/admin/create-lot">
+            <label for="name">Lot Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="price">Price per Hour:</label>
+            <input type="number" id="price" name="price" step="0.01" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" required></textarea>
+
+            <label for="pin_code">Pin Code:</label>
+            <input type="text" id="pin_code" name="pin_code" required>
+
+            <label for="max_spots">Max Spots:</label>
+            <input type="number" id="max_spots" name="max_spots" required>
+
+            <label for="rows">Rows:</label>
+            <input type="number" id="rows" name="rows" min="1" required>
+
+            <label for="columns">Columns:</label>
+            <input type="number" id="columns" name="columns" min="1" required>
+            
+            <label for="latitude">Latitude:</label>
+            <input type="text" name="latitude" required>
+            <label for="longitude">Longitude:</label>
+            <input type="text" name="longitude" required>
+            <button type="submit">Create Lot</button>
+        </form>
+        <a href="/admin/parking-lots">Back to Parking Lots</a>
+    </div>
+</body>
+</html>

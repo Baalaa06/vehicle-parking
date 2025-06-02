@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block head %}
+{{ super() }}
+<style>
+    #map { 
+        height: 400px;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+    .leaflet-container img {
+        max-width: none !important;
+        max-height: none !important;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 style="margin: 1.5rem 0;">Admin Dashboard</h1>
+
+<div class="stats-container">
+    <div class="stat-card">
+        <h3>Parking Lots</h3>
+        <div class="stat-value">{{ parking_lots|length }}</div>
+        <a href="/admin/parking-lots" class="btn btn-primary">Manage Lots</a>
+    </div>
+    
+    <div class="stat-card">
+        <h3>Total Users</h3>
+        <div class="stat-value">{{ users|length }}</div>
+        <a href="/admin/users" class="btn btn-primary">View Users</a>
+    </div>
+</div>
+
+<div class="card">
+    <h2 class="card-title">Parking Lot Statistics</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Parking Lot</th>
+                <th>Total Spots</th>
+                <th>Occupied Spots</th>
+                <th>Available Spots</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for stat in spot_stats %}
+            <tr>
+                <td>{{ stat.name }}</td>
+                <td>{{ stat.total_spots }}</td>
+                <td class="spot-occupied">{{ stat.occupied_spots }}</td>
+                <td class="spot-available">{{ stat.total_spots - stat.occupied_spots }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock %}

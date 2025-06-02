@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spot Search</title>
+</head>
+<body>
+    <div class="result">
+        <h2>Search Result for "{{ query }}" in {{ lot.name }}</h2>
+        {% if spot %}
+            <p><strong>Spot Number:</strong> {{ spot.spot_number }}</p>
+            <p><strong>Status:</strong>
+                <span class="status-{{ spot.status }}">
+                    {{ "Available" if spot.status == "A" else "Occupied" }}
+                </span>
+            </p>
+        {% else %}
+            <p>No spot found with that number in this lot.</p>
+        {% endif %}
+        <a href="/admin/parking-spots/{{ lot.id }}"><button style="color:brown; background-color: azure;">Back to Parking Spots</button></a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reserve Parking Spot</title>
+    <style>
+        body { background: #e3f2fd; font-family: Arial, sans-serif; }
+        .container { max-width: 400px; margin: 60px auto; background: #fff; padding: 32px; border-radius: 8px; box-shadow: 0 2px 8px #90caf9; }
+        h2 { text-align: center; margin-bottom: 24px; }
+        label { display: block; margin-top: 12px; }
+        select, input { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #90caf9; }
+        button { margin-top: 20px; width: 100%; padding: 10px; background: #1976d2; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #1565c0; }
+        .error { color: #d32f2f; margin-top: 12px; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Reserve a Parking Spot</h2>
+        {% if error %}
+            <div class="error">{{ error }}</div>
+        {% endif %}
+        <form method="post" action="/user/reserve">
+            <label for="lot_id">Select Parking Lot:</label>
+            <select id="lot_id" name="lot_id" required>
+                {% for lot in parking_lots %}
+                    <option value="{{ lot.id }}">{{ lot.name }} ({{ lot.available_spots }} available)</option>
+                {% endfor %}
+            </select>
+            <input type="hidden" name="user_id" value="{{ user.id }}">
+            <button type="submit">Reserve</button>
+        </form>
+        <a href="/user/dashboard?user_id={{ user.id }}" style="display:block;text-align:center;margin-top:18px;color:#1976d2;">Back to Dashboard</a>
+    </div>
+</body>
+</html>

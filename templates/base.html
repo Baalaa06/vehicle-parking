@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vehicle Parking App</title>
+    <link rel="icon" type="image/jpg" href="https://plus.unsplash.com/premium_photo-1674512540096-46b2ca19ef96?q=80&w=1933&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D">
+    <style>
+        :root {
+            --primary: #3498db;
+            --secondary: #2ecc71;
+            --danger: #e74c3c;
+            --dark: #2c3e50;
+            --light: #f5f7fa;
+            --gray: #95a5a6;
+            --purple: #9b59b6;
+
+            /*for dark mode*/
+            --bg-color: #f5f7fa;
+            --text-color: #2c3e50;
+            --card-bg: white;
+            --header-bg: var(--dark);
+            --header-text: white;
+            --table-header: #f2f2f2;
+            --table-row-hover: #f9f9f9;
+        }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        header {
+            background-color: var(--header-bg);
+            color: var(--header-text);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        nav ul li {
+            margin-left: 1.5rem;
+        }
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+        }
+        nav ul li a:hover {
+            opacity: 0.8;
+        }
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+        .btn-secondary {
+            background-color: var(--secondary);
+            color: white;
+        }
+        .btn-danger {
+            background-color: var(--danger);
+            color: white;
+        }
+        .btn-gray {
+            background-color: var(--gray);
+            color: white;
+        }
+        .btn-purple {
+            background-color: var(--purple);
+            color: white;
+        }
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .card-title {
+            color: var(--primary);
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid var(--primary);
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        .alert {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+        }
+        .alert-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1rem;
+        }
+        table th, table td {
+            padding: 0.75rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        table th {
+            background-color: var(--table-header);
+            font-weight: 600;
+        }
+        table tr:hover {
+            background-color: #f9f9f9;
+        }
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        .stat-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1.5rem;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: var(--primary);
+            margin: 0.5rem 0;
+        }
+        .spot-available {
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        .spot-occupied {
+            color: var(--danger);
+            font-weight: bold;
+        }
+        .reservation-card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .reservation-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+        }
+        .reservation-title {
+            font-weight: 600;
+            color: var(--primary);
+        }
+        .reservation-cost {
+            font-weight: bold;
+            color: var(--secondary);
+        }
+        table tr:hover {
+            background-color: var(--table-row-hover);
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 22px;
+            width: 22px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(30px);
+        }
+        
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            margin-left: auto;
+        }
+        
+        .toggle-label {
+            margin-right: 10px;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container header-content">
+            <div class="logo">Parking App</div>
+            <nav>
+                <ul>
+                    <!--<div class="toggle-container">
+                        <span class="toggle-label">Dark Mode</span>
+                        <label class="dark-mode-toggle">
+                            <input type="checkbox" id="darkModeToggle" 
+                                   {{ 'checked' if request.cookies.get('darkMode') == 'true' else '' }}>
+                            <span class="slider"></span>
+                        </label>
+                    </div>-->
+                    
+                    {% if request.url.path.startswith('/admin') %}
+                        <li><a href="/admin/dashboard">Dashboard</a></li>
+                        <li><a href="/admin/parking-lots">Parking Lots</a></li>
+                        <li><a href="/admin/users">Users</a></li>
+                        <li><a href="/login">Logout</a></li>
+                    {% elif request.url.path.startswith('/user') %}
+                        <li><a href="/user/dashboard?user_id={{ request.query_params.user_id }}">Dashboard</a></li>
+                        <li><a href="/user/history?user_id={{ request.query_params.user_id }}">History</a></li>
+                        <li><a href="/login">Logout</a></li>
+                    {% else %}
+                        <li><a href="/login" style="position: relative; z-index: 1;">Login</a></li>
+                        <li><a href="/register" style="position: relative; z-index: 1;">Register</a></li>
+                    {% endif %}
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        {% if request.query_params.error %}
+            <div class="alert alert-danger">
+                {{ request.query_params.error }}
+            </div>
+        {% endif %}
+        {% if request.query_params.success %}
+            <div class="alert alert-success">
+                {{ request.query_params.success }}
+            </div>
+        {% endif %}
+        {% block content %}{% endblock %}
+    </main>
+</body>
+</html>

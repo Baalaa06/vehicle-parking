@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parking Spots</title>
+    <style>
+        body { background: #fce4ec; font-family: Arial, sans-serif; }
+        .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #f06292; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #f06292; padding: 8px; text-align: center; }
+        th { background: #f06292; color: #fff; }
+        .status-A { color: #388e3c; font-weight: bold; }
+        .status-O { color: #d32f2f; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <form method="get" action="/admin/search-spot" style="margin-bottom:20px;">
+            <input type="text" name="query" placeholder="Enter Spot Number:" required>
+            <input type="hidden" name="lot_id" value="{{ lot.id }}">
+            <button type="submit" style="color:#d32f2f; background-color: aqua;">Search Spot</button>
+        </form>
+        <h2>Parking Spots for {{ lot.name }}</h2>
+        <table>
+            <tr>
+                <th>Spot Number</th>
+                <th>Status</th>
+                <th>Current User</th>
+                <th>Parking Time</th>
+            </tr>
+            {% for spot in parking_spots %}
+            <tr>
+                <td>{{ spot.spot_number }}</td>
+                <td class="status-{{ spot.status }}">{{ "Available" if spot.status == "A" else "Occupied" }}</td>
+                <td>{{ spot.username or "-" }}</td>
+                <td>{{ spot.parking_timestamp or "-" }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/admin/parking-lots">Back to Parking Lots</a>
+    </div>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>My Bills</title>
+    <style>
+        body { background: #f1f8e9; font-family: Arial, sans-serif; }
+        .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #aed581; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #aed581; padding: 8px; text-align: center; }
+        th { background: #aed581; }
+        a.button { padding: 6px 12px; background: #388e3c; color: #fff; border-radius: 4px; text-decoration: none; }
+        a.button:hover { background: #2e7031; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>My Bills</h2>
+        <table>
+            <tr>
+                <th>Bill ID</th>
+                <th>Lot ID</th>
+                <th>Spot ID</th>
+                <th>Start Time</th>
+                <th>End Time</th>
+                <th>Hours</th>
+                <th>Rate</th>
+                <th>Cost</th>
+                <th>Download</th>
+            </tr>
+            {% for bill in bills %}
+            <tr>
+                <td><button onclick="downloadBill('{{ bill.id }}','{{ bill.lot_id }}', '{{ bill.spot_id }}', '{{ bill.start_time }}', '{{ bill.end_time }}', '{{ bill.hours }}', '{{ bill.rate }}', '{{ bill.cost }}')">{{ bill.id }}</button></td>
+                <td>{{ bill.lot_id }}</td>
+                <td>{{ bill.spot_id }}</td>
+                <td>{{ bill.start_time }}</td>
+                <td>{{ bill.end_time }}</td>
+                <td>{{ bill.hours }}</td>
+                <td>₹{{ bill.rate }}</td>
+                <td>₹{{ bill.cost }}</td>
+                <td>
+                    <button onclick="downloadBill('{{ bill.id }}','{{ bill.lot_id }}', '{{ bill.spot_id }}', '{{ bill.start_time }}', '{{ bill.end_time }}', '{{ bill.hours }}', '{{ bill.rate }}', '{{ bill.cost }}')">Download</button>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/user/dashboard?user_id={{ request.query_params.user_id }}" class="button" style="margin-top:24px;display:inline-block;">Back to Dashboard</a>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script>
+    function downloadBill(id, lot, spot, start, end, hours, rate, cost) {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.setFontSize(15);
+        doc.text("Parking Bill", 10, 10);
+        doc.setFontSize(12);
+        doc.text(`Bill ID: ${id}`, 10, 25);
+        doc.text(`Lot ID: ${lot}`, 10, 35);
+        doc.text(`Spot: ${spot}`, 10, 45);
+        doc.text(`Start Time: ${start}`, 10, 55);
+        doc.text(`End Time: ${end}`, 10, 65);
+        doc.text(`Hours Parked: ${hours}`, 10, 75);
+        doc.text(`Rate per Hour: ₹${rate}`, 10, 85);
+        doc.text(`Total Amount: ₹${cost}`, 10, 95);
+        doc.save(`parking_bill_${id}.pdf`);
+    }
+    </script>
+</body>
+</html>

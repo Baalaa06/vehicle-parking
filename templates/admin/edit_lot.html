@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Parking Lot</title>
+    <style>
+        body { background: #fffde7; font-family: Arial, sans-serif; }
+        .container { max-width: 400px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #ffe082; }
+        label { display: block; margin-top: 12px; }
+        input, textarea { width: 100%; padding: 8px; margin-top: 4px; border-radius: 4px; border: 1px solid #ffe082; }
+        button { margin-top: 16px; padding: 10px 24px; background: #fbc02d; color: #fff; border: none; border-radius: 4px; cursor: pointer; }
+        button:hover { background: #f9a825; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Edit Parking Lot</h2>
+        <form method="post" action="/admin/edit-lot/{{ lot.id }}">
+            <label for="name">Lot Name:</label>
+            <input type="text" id="name" name="name" value="{{ lot.name }}" required>
+
+            <label for="price">Price per Hour:</label>
+            <input type="number" id="price" name="price" step="0.01" value="{{ lot.price_per_hour }}" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" required>{{ lot.address }}</textarea>
+
+            <label for="pin_code">Pin Code:</label>
+            <input type="text" id="pin_code" name="pin_code" value="{{ lot.pin_code }}" required>
+
+            <label for="max_spots">Max spots:</label>
+            <input type="number" id="max_spots" name="max_spots" value="{{ lot.max_spots }}" required>
+            
+            <label for="rows">Rows:</label>
+            <input type="number" id="rows" name="rows" value="{{ lot.rows }}" required>
+
+            <label for="columns">Columns:</label>
+            <input type="number" id="columns" name="columns" value="{{ lot.columns }}" required>
+
+            <label for="latitude">Latitude:</label>
+            <input type="text" id="latitude" name="latitude" value="{{ lot.latitude }}" required>
+
+            <label for="longitude">Longitude:</label>
+            <input type="text" id="longitude" name="longitude" value="{{lot.longitude}}" required>
+
+            <button type="submit">Update Lot</button>
+        </form>
+        <a href="/admin/parking-lots">Back to Parking Lots</a>
+    </div>
+</body>
+</html>

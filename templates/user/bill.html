@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Parking Bill</title>
+    <style>
+        body { background: #fffde7; font-family: Arial, sans-serif; }
+        .bill-container { 
+            max-width: 400px; margin: 40px auto; background: #fff; padding: 32px; border-radius: 8px; box-shadow: 0 2px 8px #ffe082; }
+        h2 { text-align: center; }
+        .bill-details { margin-top: 24px; }
+        .bill-details div { margin-bottom: 10px; }
+        .total { font-size: 1.2em; font-weight: bold; color: #fbc02d; }
+        .button { display: block; margin: 24px auto 0 auto; padding: 10px 24px; background: #1976d2; color: #fff; border: none; border-radius: 4px; text-align: center; text-decoration: none; }
+        .button:hover { background: #1565c0; }
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <div class="bill-container">
+        <button onclick="downloadPDF()" class="button" style="background:#388e3c;margin-top:10px;">Download PDF</button>
+<script>
+function downloadPDF() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(14);
+    doc.text("Parking Bill", 10, 10);
+    doc.setFontSize(12);
+    doc.text("Bill ID: {{ reservation.id }}", 10, 25);
+    doc.text("User: {{ user.id }}", 10, 35);
+    doc.text("Spot: {{ bill.spot_id }}", 10, 45);
+    doc.text("Start Time: {{ bill.start_time }}", 10, 55);
+    doc.text("End Time: {{ bill.end_time }}", 10, 65);
+    doc.text("Hours Parked: {{ bill.hours }}", 10, 75);
+    doc.text("Rate per Hour: ₹{{ bill.rate }}", 10, 85);
+    doc.text("Total Amount: ₹{{ bill.cost }}", 10, 95);
+    doc.save("parking_bill_{{ reservation.id }}.pdf");
+}
+</script>
+    </div>
+</head>
+<body>
+    <div class="bill-container">
+        <h2>Parking Bill</h2>
+        {% if bill %}
+        <div class="bill-details">
+            <div><strong>Bill ID:</strong> {{ reservation.id }}</div>
+            <div><strong>User:</strong> {{ user.id }}</div>
+            <div><strong>Spot:</strong> {{ bill.spot_id }}</div>
+            <div><strong>Start Time:</strong> {{ bill.start_time }}</div>
+            <div><strong>End Time:</strong> {{ bill.end_time }}</div>
+            <div><strong>Hours Parked:</strong> {{ bill.hours }}</div>
+            <div><strong>Rate per Hour:</strong> ₹{{ bill.rate }}</div>
+            <div class="total">Total Amount: ₹{{ bill.cost }}</div>
+        </div>
+        {% else %}
+        <div>No bill available.</div>
+        {% endif %}
+        <a href="/user/dashboard?user_id={{ user.id }}" class="button">Back to Dashboard</a>
+    </div>
+</body>
+</html>

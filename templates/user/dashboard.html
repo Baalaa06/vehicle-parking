@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}User Dashboard{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+<style>
+    #map-container {
+        height: 500px;
+        width: 100%;
+        margin-bottom: 2rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        overflow: hidden;
+    }
+    
+    .reservation-card {
+        border: 1px solid #eee;
+        border-radius: 5px;
+        padding: 15px;
+        margin-bottom: 15px;
+    }
+    
+    .reservation-header {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+    
+    #lots-table {
+        width: 100%;
+        margin-top: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Welcome, {{ user.username }}</h1>
+<h4><b>(click the lot name for directions!!)</b></h4>
+
+<div id="map-container">
+    <div id="map"></div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Available Parking Lots</h2>
+        <a href="/user/bills?user_id={{ user.id }}" class="btn btn-primary">My Bills</a>
+    </div>
+    <div class="card-body">
+        <table class="table table-hover" id="lots-table">
+            <thead>
+                <tr>
+                    <th>Location</th>
+                    <th>Price/Hour</th>
+                    <th>Available Spots</th>
+                    <th>Distance</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Filled by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% if active_reservations %}
+<div class="card mb-4">
+    <div class="card-header">
+        <h2 class="mb-0">Active Reservations</h2>
+    </div>
+    <div class="card-body">
+        {% for reservation in active_reservations %}
+        <div class="reservation-card">
+            <div class="reservation-header">
+                <h5 class="reservation-title">
+                    {{ reservation.lot_name }} - Spot {{ reservation.spot_number }}
+                </h5>
+                <div>
+                    <a href="/user/release/{{ reservation.id }}?user_id={{ user.id }}" 
+                       class="btn btn-danger"
+                       onclick="return confirm('Are you sure you want to release this spot?')">
+                        Release Spot
+                    </a>
+                </div>
+            </div>
+            <div class="reservation-details">
+                <div><strong>Parked at:</strong> {{ reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                <div><strong>Current Cost:</strong> ₹{{ "%.2f"|format(reservation.cost) if reservation.cost else "Calculating..." }}</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+{% if past_reservations %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h2 class="mb-0">Recent History</h2>
+        <a href="/user/history?user_id={{ user.id }}" class="btn btn-primary">View Full History</a>
+    </div>
+    <div class="card-body">
+        {% for reservation in past_reservations %}
+        <div class="reservation-card">
+            <div class="reservation-header">
+                <h5 class="reservation-title">
+                    {{ reservation.lot_name }} - Spot {{ reservation.spot_number }}
+                </h5>
+                <div class="reservation-cost">
+                    ₹{{ "%.2f"|format(reservation.cost) }}
+                </div>
+            </div>
+            <div class="reservation-details">
+                <div><strong>Parked:</strong> {{ reservation.parking_timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                <div><strong>Released:</strong> {{ reservation.leaving_timestamp.strftime('%Y-%m-%d %H:%M') }}</div>
+                <div><strong>Duration:</strong> {{ ((reservation.leaving_timestamp - reservation.parking_timestamp).total_seconds()/3600)|round(2) }} hours</div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endif %}
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script>
+// Store map globally to prevent multiple instances
+var map;
+
+function haversine(lat1, lon1, lat2, lon2) {
+    const R = 6371; // Earth radius in km
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a = 
+        Math.sin(dLat/2) * Math.sin(dLat/2) +
+        Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * 
+        Math.sin(dLon/2) * Math.sin(dLon/2);
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function renderLotsTable(sortedLots) {
+    const tbody = document.querySelector("#lots-table tbody");
+    tbody.innerHTML = sortedLots.map(lot => `
+        <tr>
+            <td>
+                <a href="https://www.google.com/maps?q=${lot.lat},${lot.lng}" target="_blank" class="btn btn-outline-primary"> ${lot.name} </a>
+            </td>
+            <td>₹${lot.price.toFixed(2)}</td>
+            <td>${lot.available}</td>
+            <td>${lot.distance ? lot.distance.toFixed(2) + ' km' : 'N/A'}</td>
+            <td>
+                <a href="/user/book/${lot.id}?user_id={{ user.id }}" class="btn btn-primary btn-sm">
+                    Reserve
+                </a>
+            </td>
+        </tr>
+    `).join('');
+}
+
+// Process parking lots data
+const lots = [
+    {% for lot in parking_lots %}
+    {
+        id: {{ lot.id }},
+        name: "{{ lot.name|e }}",
+        lat: {{ lot.latitude }},
+        lng: {{ lot.longitude }},
+        available: {{ lot.available_spots if lot.available_spots is defined else 0 }},
+        price: {{ lot.price_per_hour if lot.price_per_hour is defined else 0 }}
+    }{% if not loop.last %},{% endif %}
+    {% endfor %}
+];
+
+// Try to get user location
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+        position => {
+            const userLocation = {
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            };
+            
+            // Calculate distances
+            const lotsWithDistance = lots.map(lot => ({
+                ...lot,
+                distance: haversine(userLocation.lat, userLocation.lng, lot.lat, lot.lng)
+            }));
+            
+            // Sort by distance
+            lotsWithDistance.sort((a, b) => a.distance - b.distance);
+            
+            // Render UI
+            renderLotsTable(lotsWithDistance);
+        },
+        error => {
+            console.error("Geolocation error:", error);
+            // Default to first parking lot if location denied
+            const defaultLocation = lots[0] || { lat: 12.9716, lng: 77.5946 };
+            renderLotsTable(lots);
+            initializeMap(defaultLocation, lots);
+        }
+    );
+} else {
+    // Fallback if geolocation not supported
+    const defaultLocation = lots[0] || { lat: 12.9716, lng: 77.5946 };
+    renderLotsTable(lots);
+}
+</script>
+{% endblock %}

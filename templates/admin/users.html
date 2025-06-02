@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>All Users</title>
+    <style>
+        body { background: #f3e5f5; font-family: Arial, sans-serif; }
+        .container { max-width: 900px; margin: 40px auto; background: #fff; padding: 24px; border-radius: 8px; box-shadow: 0 2px 8px #ce93d8; }
+        h2 { margin-bottom: 24px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 16px; }
+        th, td { border: 1px solid #ce93d8; padding: 8px; text-align: center; }
+        th { background: #ce93d8; color: #fff; }
+        .button { padding: 6px 12px; background: #7b1fa2; color: #fff; border-radius: 4px; text-decoration: none; }
+        .button:hover { background: #4a148c; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% if request.query_params.error %}
+        <script>
+            alert("{{ request.query_params.error }}");
+        </script>
+        {% endif %}
+        <h2>Registered Users</h2>
+        <table>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Registered At</th>
+                <th>Actions</th>
+            </tr>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.created_at }}</td>
+                <td>
+                    <a href="/admin/user/{{ user.id }}" class="button">View</a>
+                    <a href="/admin/delete-user/{{ user.id }}" class="button" style="background:#d32f2f;">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </table>
+        <a href="/admin/dashboard" class="button" style="margin-top:24px;display:inline-block;">Back to Dashboard</a>
+    </div>
+</body>
+</html>

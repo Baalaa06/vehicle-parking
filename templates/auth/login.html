@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block content %}
+<video autoplay muted loop id="bg-video" style="position:fixed; right:0; bottom:0; min-width:100vw; min-height:100vh; z-index:-1; object-fit:cover;">
+    <source src="https://dm0qx8t0i9gc9.cloudfront.net/watermarks/video/HAo-4oX79l1fjgkdk/videoblocks-12z_v1-0026_220213_dji_0044_rumcrgqeu2__027e6a8f425d0cb68b0b5bfd1c219d5e__P360.mp4" type="video/mp4">
+    Your browser does not support the video tag.
+</video>
+<style>
+.bg-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(255,255,255,0.1);
+    z-index: 0;
+}
+</style>
+<div class="bg-overlay"></div>
+{% if request.query_params.error %}
+<script>
+    alert("{{ request.query_params.error }}");
+</script>
+{% endif %}
+<div style="max-width: 500px; margin: 2rem auto; position: relative; z-index: 1;">
+    <div class="card" style="position: relative; z-index: 1;">
+        <h2 style="text-align: center; margin-bottom: 1.5rem;">Login</h2>
+        
+        {% if error %}
+            <div class="alert alert-danger" style="margin-bottom: 1.5rem;">
+                {{ error }}
+            </div>
+        {% endif %}
+        
+        <form method="post" style="margin-bottom: 1.5rem;">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            
+            <button type="submit" class="btn btn-primary" style="width: 100%; padding: 0.75rem;">
+                Login
+            </button>
+        </form>
+        
+        <div style="text-align: center;">
+            <p style="margin-bottom: 1rem;">Don't have an account?</p>
+            <a href="/register" class="btn btn-secondary" style="display: inline-block; width: auto;">
+                Register Now
+            </a>
+        </div>
+    </div>
+    <center><footer>Made by SRB &copy; 2025</footer></center>
+</div>
+{% endblock %}

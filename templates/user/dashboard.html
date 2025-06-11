@@ -34,6 +34,34 @@
         width: 100%;
         margin-top: 20px;
     }
+    @media (max-width: 600px) {
+        #map-container {
+            height: 250px;
+            min-width: 0;
+        }
+        .card, .reservation-card {
+            padding: 8px;
+            margin-bottom: 10px;
+        }
+        .card-header, .card-body {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        #lots-table, .table {
+            font-size: 0.97rem;
+            min-width: 0;
+            width: 100%;
+            display: block;
+            overflow-x: auto;
+        }
+        #lots-table th, #lots-table td {
+            padding: 6px 4px;
+            white-space: nowrap;
+        }
+        h1, h2, h4 {
+            font-size: 1.1rem;
+        }
+    }
 </style>
 {% endblock %}
 
@@ -50,7 +78,7 @@
         <h2 class="mb-0">Available Parking Lots</h2>
         <a href="/user/bills?user_id={{ user.id }}" class="btn btn-primary">My Bills</a>
     </div>
-    <div class="card-body">
+    <div class="card-body" style="overflow-x: auto;">
         <table class="table table-hover" id="lots-table">
             <thead>
                 <tr>

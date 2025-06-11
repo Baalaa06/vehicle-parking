@@ -1,17 +1,10 @@
+import os
 import psycopg2
 from psycopg2.extras import RealDictCursor
 
 def get_db():
-    conn = psycopg2.connect(
-        dbname="first",
-        user="postgres",
-        password="root",
-        host="localhost",
-        port="5432",
-        cursor_factory=RealDictCursor
-    )
-    if conn:
-        print("Database connected successfully")
-    else:
-        print("Unsuccessful connection!")
+    db_url = os.environ.get("DATABASE_URL")
+    if not db_url:
+        raise Exception("DATABASE_URL environment variable not set")
+    conn = psycopg2.connect(db_url, cursor_factory=RealDictCursor)
     return conn
